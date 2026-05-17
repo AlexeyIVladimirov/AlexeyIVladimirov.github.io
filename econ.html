@@ -4,7 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, maximum-scale=2.0">
   <title>你骨子里是哪派经济学家？</title>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js">
+  </script>
   <style>
     * {
       margin: 0;
@@ -23,7 +24,7 @@
     .container {
       background: #fffcf7;
       border-radius: 1.8rem;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.06), 0 6px 12px rgba(0,0,0,0.04);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.06), 0 6px 12px rgba(0, 0, 0, 0.04);
       padding: 2rem 2.2rem;
       border: 1px solid #ede3d6;
     }
@@ -60,17 +61,18 @@
       transition: width 0.25s ease;
     }
     .question-card {
-      margin-bottom: 2.2rem;
-      padding: 1.3rem 1.5rem;
+      margin-bottom: 1.8rem;
+      padding: 1.5rem 1.8rem;
       background: #fefaf6;
       border-left: 4px solid #c7aa8f;
       border-radius: 1rem;
       transition: all 0.2s;
+      min-height: 220px;
     }
     .question-title {
       font-weight: 700;
       font-size: 1.2rem;
-      margin-bottom: 1rem;
+      margin-bottom: 1.4rem;
       color: #4a3328;
       display: flex;
       align-items: baseline;
@@ -103,7 +105,7 @@
     .option:hover {
       background: #faf0e5;
       border-color: #c8a383;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.04);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.04);
     }
     .option input[type="radio"] {
       margin-top: 0.25rem;
@@ -114,22 +116,26 @@
     .option.selected {
       background: #f6ede3;
       border-color: #b2815c;
-      box-shadow: 0 2px 10px rgba(180,120,80,0.15);
+      box-shadow: 0 2px 10px rgba(180, 120, 80, 0.15);
       font-weight: 500;
+    }
+    .nav-buttons {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 1.5rem;
     }
     .btn {
       background: #8b6b58;
       border: none;
       color: white;
       font-weight: 600;
-      font-size: 1.2rem;
-      padding: 0.9rem 2rem;
+      font-size: 1rem;
+      padding: 0.7rem 1.8rem;
       border-radius: 3rem;
       cursor: pointer;
-      width: 100%;
       transition: background 0.2s;
       letter-spacing: 1px;
-      margin-top: 1rem;
     }
     .btn:hover {
       background: #6e4f3c;
@@ -138,13 +144,28 @@
       background: #cbb7a8;
       cursor: not-allowed;
     }
+    .btn-secondary {
+      background: #dacbbc;
+      color: #4a3328;
+    }
+    .btn-secondary:hover {
+      background: #c7aa8f;
+    }
+    .submit-btn {
+      background: #5e3c2c;
+      font-size: 1.1rem;
+      padding: 0.8rem 2rem;
+    }
+    .submit-btn:hover {
+      background: #3e2b20;
+    }
     .result-paper {
       margin-top: 2rem;
       background: #fffdf9;
       border: 1px solid #cfbcab;
       border-radius: 1.8rem;
       padding: 2rem 2.2rem;
-      box-shadow: 0 15px 35px rgba(140,90,60,0.08);
+      box-shadow: 0 15px 35px rgba(140, 90, 60, 0.08);
       font-family: 'Times New Roman', 'Noto Serif SC', '宋体', serif;
     }
     .paper-title {
@@ -181,7 +202,8 @@
       margin: 1rem 0;
       font-size: 0.95rem;
     }
-    th, td {
+    th,
+    td {
       border: 1px solid #dacbbc;
       padding: 0.5rem 0.7rem;
       text-align: left;
@@ -203,7 +225,7 @@
       background: #fffcf9;
       padding: 0.8rem;
       border-radius: 1.2rem;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
     }
     canvas {
       max-height: 260px;
@@ -240,408 +262,544 @@
       margin-top: 0.5rem;
     }
     @media (max-width: 500px) {
-      .container { padding: 1.4rem; }
-      .question-title { font-size: 1rem; }
+      .container {
+        padding: 1.4rem;
+      }
+      .question-title {
+        font-size: 1rem;
+      }
     }
   </style>
 </head>
 <body>
-<div class="container" id="app">
-  <div id="testSection">
-    <h1>📜 你骨子里是哪派经济学家？</h1>
-    <div class="subtitle">20道生活场景 · 揭开你的经济学灵魂</div>
-    <div class="progress"><div class="progress-fill" id="progressFill"></div></div>
-    <form id="quizForm"></form>
-    <button class="btn" id="submitBtn" disabled>🔍 查看我的经济学人格报告</button>
+  <div class="container" id="app">
+    <div id="testSection">
+      <h1>📜 你骨子里是哪派经济学家？</h1>
+      <div class="subtitle">20道生活场景 · 揭开你的经济学灵魂</div>
+      <div class="progress">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+      <div id="questionContainer" class="question-card"></div>
+      <div class="nav-buttons">
+        <button id="prevBtn" class="btn btn-secondary" disabled>◀ 上一题</button>
+        <span id="questionIndicator" style="color:#8b6b58; font-weight:500;"></span>
+        <button id="nextBtn" class="btn">下一题 ▶</button>
+        <button id="submitBtn" class="btn submit-btn" style="display:none;">🔍 查看我的经济学人格报告</button>
+      </div>
+    </div>
+    <div id="resultSection" style="display: none;"></div>
   </div>
-  <div id="resultSection" style="display: none;"></div>
-</div>
 
-<script>
-  (function() {
-    // ---------- 题目定义 (隐藏分数) ----------
-    const questions = [
-      { id:1, text:"小区门口的道路坑坑洼洼很久了，你认为最好的解决方式是？", options:[
-        {text:"联系几个邻居，大家一商量，凑钱请施工队把门口这一小段先填平。谁受益谁出钱，最快最直接。", D1:3},
-        {text:"不断拨打市长热线，提交联名信，要求市政部门用税收统一修缮。公共道路就该公共出钱修。", D1:-3},
-        {text:"等一等，相信物业或开发商迟早会解决。市场有需求，自然会有人来提供修路服务，只是时间问题。", D1:2, D2:1},
-        {text:"这本质是城市公共品供给的失败，单靠个体或市场都无法根本解决。需要推动建立业主与市政的常态化沟通机制。", D1:-2, D3:-2}
-      ]},
-      { id:2, text:"你开的小餐馆附近突然开了一家大型连锁店，直接抢走三成生意，你会？", options:[
-        {text:"立刻研发新菜品、搞会员活动、做差异化服务。这就是市场竞争，我能靠自己的本事赢回来。", D1:3, D3:1},
-        {text:"向行业协会和商务局反映，希望出台政策限制连锁店的无序扩张，保护社区小店生态。", D1:-3},
-        {text:"考虑加盟那个连锁品牌，打不过就加入，这也是市场优化资源配置的一种方式。", D1:2, D2:2},
-        {text:"有点无奈。这说明个体户在资本和供应链面前太脆弱了，不是努力就能解决的，是社会结构问题。", D1:-2, D3:-2}
-      ]},
-      { id:3, text:"你如何看待AI新技术对就业的冲击？", options:[
-        {text:"短期会有人失业，但长期一定会创造出更多新工作，市场会自行吸收冲击，最终回归充分就业。", D1:2, D2:3},
-        {text:"政府必须立刻介入，提供大规模再培训计划，甚至考虑缩短工时、重新分配工作机会。", D1:-3},
-        {text:"这是一场创造性破坏，旧岗位永久消失、新岗位在别处诞生。无须过度恐慌，也无须过度干预。", D1:2, D2:-2},
-        {text:"技术从来不是中性的，它由资本驱动，会加剧劳资间的不平等。需要从劳动关系和分配制度上做根本变革。", D1:-3, D3:-3}
-      ]},
-      { id:4, text:"关于医疗服务的提供，你的看法接近哪一项？", options:[
-        {text:"私立医院充分竞争，政府只兜底最穷的人。竞争带来质量，选择权在患者手中。", D1:3},
-        {text:"以公立医疗体系为主，确保每个人不论贫富都能看得起病。医疗是权利，不是商品。", D1:-3},
-        {text:"可以发展商业健康保险，用市场化的保险机制来分担风险，辅以强监管，两者结合最佳。", D1:2, D4:1},
-        {text:"医疗问题的根源在于资源分配不均。如果不解决贫富差距这个结构性问题，无论公私立都难以让所有人满意。", D3:-3, D1:-1}
-      ]},
-      { id:5, text:"你中彩票得了1000万，突然要交一大笔税，你会怎么想？", options:[
-        {text:"税收是文明的对价，只要税率透明、用途正当，我完全愿意依法缴纳。", D1:-1, D2:2},
-        {text:"有点心疼，但也能理解，公共品总要有人买单。希望这笔钱真能用于教育和基建。", D1:-2},
-        {text:"交这么多税，感觉是被迫“行善”。如果这钱由我自己去投资或捐赠，效率一定更高。", D1:3},
-        {text:"富人多交税本就是应该的，这是调节收入分配的必要手段，没什么不舒服。", D1:-3, D3:-2}
-      ]},
-      { id:6, text:"你辛苦存钱计划旅行，出发前手机突然坏掉，维修费刚好花光旅行积蓄，你会？", options:[
-        {text:"没关系，重新开始存钱，计划推迟一点。生活总有意外，但最终会回到正轨。", D2:3},
-        {text:"太倒霉了，感觉整个计划都被打乱了。也许这是命运在暗示我该换个活法，不旅行了。", D2:-3},
-        {text:"我先借钱去旅行，回来再还。打破计划本身就是生活的一部分，人要学会享受不确定性。", D2:-2, D3:1},
-        {text:"我会反思，为什么这么小的冲击就能打垮整个财务计划？应该建立一个紧急备用金制度，让系统更有韧性。", D2:-1, D3:-2}
-      ]},
-      { id:7, text:"看到朋友圈有人发了“五年计划”目标，你的态度是？", options:[
-        {text:"真棒！我也有五年计划，人生就该这样一步步稳健地朝目标靠近。", D2:3, D4:1},
-        {text:"计划赶不上变化。世界是剧烈变动的，我倾向于只定一个大方向，然后随时灵活调整。", D2:-3},
-        {text:"长期规划其实是种幻觉，我们连下周会发生什么都无法预测。我更相信即兴应对的能力。", D2:-3, D4:-2},
-        {text:"有没有计划，取决于你手里有多少资源。如果连下个月的房租都担心，五年计划就是奢侈品。", D2:-2, D3:-3}
-      ]},
-      { id:8, text:"和好友发生了一次大争吵后，你觉得？", options:[
-        {text:"冷静下来好好沟通一下，真诚的关系最终能修复如初，恢复平衡。", D2:3},
-        {text:"有些裂痕一旦产生，关系就永远和以前不一样了。也许我们再也回不去了。", D2:-3},
-        {text:"吵架也是一种深度沟通的方式。正是这种剧烈的冲突，在推动关系演化到新的阶段。", D2:-2, D3:1},
-        {text:"这取决于双方的脾气性格，有些人就是容易记仇，有些人吵完就忘，不能一概而论。", D2:-1, D4:-1}
-      ]},
-      { id:9, text:"你如何看待“努力就能成功”这句话？", options:[
-        {text:"基本正确。社会整体上是公平的，努力大概率会有回报，不努力一定没有。", D2:2, D3:2},
-        {text:"太简单了。时代、运气、出身这些不可控因素才是关键，很多人的成功是不可复制的。", D2:-2, D3:-2},
-        {text:"这得看你在哪个赛道。在稳定行业里努力有用，在剧烈变动的行业里，选择比努力重要得多。", D2:-3, D1:1},
-        {text:"这句话更应被视作一种社会规训，让个体把失败归咎于自己不够努力，从而遮蔽结构性的不公。", D3:-3, D2:-1}
-      ]},
-      { id:10, text:"一个勤奋能干的同事突然被裁员，你的第一反应是？", options:[
-        {text:"只是暂时波动，凭他的能力很快会找到类似甚至更好的工作，经济机器终会吸收他。", D2:3},
-        {text:"他的人生轨迹可能就此改变。有些岗位一旦消失，就再也不会回来了，这是结构转型的代价。", D2:-3},
-        {text:"要看是什么行业。如果是夕阳产业，那就不奇怪；如果是新兴产业，那就是公司自身经营问题。", D2:-1, D1:1},
-        {text:"公司裁员往往不是看个人努力，而是看谁的成本高、谁的关系不够硬。职场本身就是权力场。", D3:-3, D2:-2}
-      ]},
-      { id:11, text:"一位寒门学子考上顶尖名校，媒体争相报道“寒门贵子”，你觉得这主要说明了？", options:[
-        {text:"个人天赋异禀加上超乎常人的自律，一个人只要足够优秀，终究能打破环境限制。", D3:3, D4:2},
-        {text:"这是个极小概率事件，它恰好说明成功的偶然性。更该关注的是，为什么绝大多数同样努力的孩子被埋没了。", D3:-3},
-        {text:"很励志，但如果深挖，他一定是在某个关键节点抓住了偶然的教育资源，个人努力和机遇各占一半。", D3:-1, D2:-2},
-        {text:"这说明现有的教育选拔机制还在起作用，只要考试机制公平，底层就有上升通道。制度没问题。", D3:2, D2:2}
-      ]},
-      { id:12, text:"一个人年纪轻轻就创业成功、财富自由，主要靠什么？", options:[
-        {text:"敏锐的商业嗅觉和敢于冒险的企业家精神。", D3:3, D1:2},
-        {text:"家庭的人脉资源和试错资本，外加运气好恰好站上了风口。", D3:-3},
-        {text:"两者都有。但风口的权重远大于个人努力，同样的才干在不同时代结局截然不同。", D2:-2, D3:-2},
-        {text:"所谓创业神话，更多是媒体渲染的幸存者偏差。我们只看到成功者，看不到千万失败者。这无法用个体因素解释。", D3:-3, D4:-1}
-      ]},
-      { id:13, text:"看到身材管理很好的人，你的第一反应是？", options:[
-        {text:"他一定极其自律，坚持锻炼和严格饮食。这是个人意志力的胜利。", D3:3, D4:2},
-        {text:"也许他有钱有闲，请得起私教和营养师，不用为生计奔波。自律的背后是结构性优势。", D3:-3},
-        {text:"基因好也是一种可能，这个得承认，人和人就是有差异的。", D3:1, D4:-1},
-        {text:"在一些圈子里，身材本身就是阶层的符号。健康食品、健身卡都是要花钱的，这是一种阶级展示。", D3:-2, D1:-1}
-      ]},
-      { id:14, text:"和同事合作项目出了大错，领导追责，你内心觉得是谁的错？", options:[
-        {text:"如果是我负责的部分出错，那就是我自己的问题，不应该推脱给外部原因。", D3:3, D4:1},
-        {text:"先看流程和分工。很多时候是制度和沟通管道本身有漏洞，才会必然出错，不全是个人责任。", D3:-3},
-        {text:"我认为是目标定得太离谱，资源又不够，在这种结构下谁干都会出错。怪个人是领导在甩锅。", D3:-2, D2:-2},
-        {text:"我虽然会感到委屈，但也会反思是不是自己没提前预警风险，下次要更主动沟通。", D3:2, D4:-1}
-      ]},
-      { id:15, text:"关于“996”工作制，你的看法是？", options:[
-        {text:"只要劳资双方自愿，高薪换奋斗，旁人无权干涉。这是契约自由。", D1:3, D3:2},
-        {text:"这本质是资本的过度强势和劳动者的议价权缺失，劳动法必须强制规定工时上限。", D1:-2, D3:-3},
-        {text:"996不是孤立的，是整个社会内卷化的症状。如果所有人都拼命加班，不加班的人就会被淘汰，这是囚徒困境。", D3:-2, D2:-2},
-        {text:"我反对996，但不指望法律。如果人人都果断跳槽拒绝这种公司，市场自己就能淘汰它。", D1:2, D3:1}
-      ]},
-      { id:16, text:"面对“限时折扣”“最后一天”的促销，你的真实态度是？", options:[
-        {text:"我很清醒。正好需要就买，不需要绝不出手。我不会被营销话术牵着走。", D4:3},
-        {text:"虽然知道是套路，但经常还是会忍不住下单。怕错过便宜的恐惧，比理性更强大。", D4:-3},
-        {text:"我会故意反向操作，一看到“限时”就偏不买，用对抗姿态来保持自己不被操控。", D4:1, D1:2},
-        {text:"这和人的成长环境有关。缺乏安全感的人更容易被稀缺性话术打动，这不是理不理性的问题。", D3:-2, D4:-2}
-      ]},
-      { id:17, text:"“明知道该早睡，却放不下手机”，你觉得这情况？", options:[
-        {text:"偶尔发生，是我计划性不强。定个闹钟锁机，靠更强的自我约束就能解决。", D3:2, D4:3},
-        {text:"经常如此，这就是人性。即时满足的诱惑太难用意志力克服了，需要外部环境设计来“助推”。", D4:-3},
-        {text:"不能全怪个人，短视频平台的设计目标就是让人上瘾。个人意志对抗的是一个由精英设计的成瘾系统。", D3:-2, D4:-2},
-        {text:"睡不着是因为对明天感到焦虑。如果生活能有更多的确定感和余裕，自然就能安心早睡了。", D2:-2, D3:-2}
-      ]},
-      { id:18, text:"选择人生伴侣时，你最信赖哪种判断方式？", options:[
-        {text:"客观条件匹配：三观、学历、经济能力，经全面理性权衡后做出选择。", D4:3, D2:2},
-        {text:"感觉。一种说不清的化学反应和相遇时的时机，这个无法用纯粹计算得出。", D4:-3},
-        {text:"我会参考身边信得过的人的意见，尤其是父母和挚友。自己的判断可能有盲区。", D4:-1, D3:-2},
-        {text:"没有固定标准。不同的文化和社会期待会塑造完全不同的择偶观，“理性”本身就是被结构定义的。", D3:-3, D4:-1}
-      ]},
-      { id:19, text:"处理人生重大决定（如跳槽、买房）时，你通常怎么做？", options:[
-        {text:"列出优劣清单，做成本收益分析，咨询相关领域专家，追求最优解。", D4:3, D2:2},
-        {text:"搜集一些信息后，最终还是跟着直觉走。有时候也相信机缘，命里有时终须有。", D4:-3},
-        {text:"先看大趋势，时代的电梯在上升还是下降，比个人在其中怎么折腾更重要。", D2:-2, D3:-2},
-        {text:"重大决定往往不可逆，所以我倾向于先做小范围尝试，根据反馈再调整。行动比空想重要。", D2:-2, D4:-1}
-      ]},
-      { id:20, text:"同事把三个月工资都投进一个据说“稳赚”的新兴币种，你的第一反应是？", options:[
-        {text:"他肯定做足了功课，说不定有内幕消息。这种敏锐和胆识，正是超额回报的来源。", D3:2, D4:2},
-        {text:"大概率是被暴富神话冲昏了头，贪婪和恐惧正在替他做决定，结局恐怕不会好。", D4:-3},
-        {text:"这和他是否有“闲钱”密切相关。如果他家境优越不在乎这笔钱，那就不是非理性，而是风险偏好不同。", D3:-2, D4:-1},
-        {text:"这种现象本身就是市场泡沫的信号。当人人都在谈论某个资产时，可能就该退场了。不是他疯了，是市场疯了。", D2:-2, D4:-1}
-      ]}
-    ];
-
-    // ---------- 16原型坐标 (D1,D2,D3,D4) 极值±10 ----------
-    const prototypes = [
-      { name:"罗伯特·卢卡斯", type:"理性预期派", code:"M E I R", quote:"天下本无事，干预自扰之。", coords:[10,10,10,10], discussion:"你相信市场是一部精密的钟表，只要不碰它，指针终会指向最优。别人看到失业，你看到自愿选择闲暇；别人呼吁救市，你冷笑一声：“预期到了就没用”。你理性得让凯恩斯翻白眼，但偶尔也需要承认：人类不是计算器。", famousQuote:"卢卡斯批判：被预测到的政策是无效的。", funnyLine:"被预测到的段子也是不好笑的。" },
-      { name:"劳伦斯·萨默斯", type:"长期停滞派", code:"S E I R", quote:"世界可能因需求不足而陷入长期停滞。", coords:[-10,10,10,10], discussion:"你看到的是一个即使市场机制完美，也可能因人口老化和技术停滞而陷入泥潭的世界。你呼吁公共投资，不是因为你喜欢大政府，而是因为别无选择。别人说你悲观，你说这是“新常态”。", famousQuote:"萨默斯：长期停滞是21世纪最大的宏观挑战。", funnyLine:"长期停滞——连乐观都停滞了。" },
-      { name:"道格拉斯·诺斯", type:"制度框架派", code:"M E D R", quote:"制度是社会的游戏规则，奠定增长或衰败的根基。", coords:[10,10,-10,10], discussion:"你始终盯着规则本身。个体努力固然重要，但好制度让坏人做不成坏事，坏制度让好人活不下去。你最喜欢问：“这个游戏规则是谁写的？”", famousQuote:"诺斯：历史是制度变迁的故事。", funnyLine:"规则不对，氪金也没用。" },
-      { name:"埃莉诺·奥斯特罗姆", type:"社群治理派", code:"M E D B", quote:"社群能超越公地悲剧，自发演化出精巧制度。", coords:[10,10,-10,-10], discussion:"你不迷信市场也怀疑利维坦。你看见的是村落、渔场、社区里的人们，如何靠着信任与沟通，自己管好了公共池塘。你的经济学里有人情味。", famousQuote:"奥斯特罗姆：公共事物的治理之道。", funnyLine:"公地悲剧的剧本，被一群大妈改写了。" },
-      { name:"路德维希·冯·米塞斯", type:"激进主观派", code:"M C I R", quote:"价值源于个体行动，任何干预都是通往奴役之路。", coords:[10,-10,10,10], discussion:"你是自由的绝对卫士，相信人的有目的行为是经济学的唯一公理。价格管制？灾难。最低工资？失业。你眼里不揉任何干预的沙子。", famousQuote:"米塞斯：人类行为公理。", funnyLine:"你连排队被插队都想引用《人的行动》。" },
-      { name:"乔治·阿克洛夫", type:"动物精神派", code:"M C I B", quote:"信心乘数崩溃时，只有看得见的手能稳住局面。", coords:[10,-10,10,-10], discussion:"你觉得市场就是一锅情绪浓汤——贪婪、恐惧、幻觉、公平感轮番沸腾。你知道，当动物精神溃散时，理性模型一文不值。", famousQuote:"阿克洛夫：动物精神。", funnyLine:"市场不是理性的，它只是还没开始恐慌。" },
-      { name:"托斯丹·凡勃伦", type:"制度演化派", code:"M C D R", quote:"制度塑造人，远多于人设计制度；演化没有最优终点。", coords:[10,-10,-10,10], discussion:"你总带着一点讽刺微笑打量世界。炫耀性消费、有闲阶级、金钱竞赛……你觉得人类是被习惯和仪式锁住的奇怪物种。", famousQuote:"凡勃伦：炫耀性消费。", famousLine:"你买那只包，是为了装东西还是为了装？" },
-      { name:"卡尔·波兰尼", type:"社会保护派", code:"M C D B", quote:"脱嵌的市场是灾难，社会必须保护自己。", coords:[10,-10,-10,-10], discussion:"你从历史的深处听见社会的反向运动：把土地、劳动力和货币都变成商品？那社会就会撕裂。你坚信经济必须重新嵌入社会关系之中。", famousQuote:"波兰尼：大转型。", funnyLine:"市场不是上帝，它只是忘了自己从哪儿来。" },
-      { name:"约翰·梅纳德·凯恩斯", type:"宏观干预派", code:"S E I R", quote:"长期而言，我们都会死；市场失灵时，政府必须行动。", coords:[-10,10,10,10], discussion:"你有一双看穿萧条的眼睛。当所有人都捂紧钱包时，你果断站出来：“我来花钱。”你相信，黑暗中需要一盏看得见的灯。", famousQuote:"凯恩斯：长期而言，我们都死了。", funnyLine:"所以双十一别等，现在就下单。" },
-      { name:"海曼·明斯基", type:"金融不稳派", code:"S C I B", quote:"稳定本身孕育着不稳定，金融天生需要最后贷款人。", coords:[-10,-10,10,-10], discussion:"你深知，平静的海面下暗流正在积聚。越久没有危机，系统就越脆弱。你主张要有强大的最后贷款人，不是为了救赌徒，而是为了保系统。", famousQuote:"明斯基时刻：稳定滋长不稳定。", funnyLine:"风平浪静的日子，正是暴风雨的摇篮。" },
-      { name:"保罗·萨缪尔森", type:"新综合派", code:"S E D R", quote:"市场调节总量，政府熨平周期；两种智慧不可偏废。", coords:[-10,10,-10,10], discussion:"你站在凯恩斯与新古典的交汇处，左手市场右手政策。你相信宏观经济学需要微观基础，也相信稳定政策可以弥合裂痕。", famousQuote:"萨缪尔森：经济学是选择的科学。", funnyLine:"你的选择困难症，终于有了理论支撑。" },
-      { name:"阿马蒂亚·森", type:"发展自由派", code:"S E D B", quote:"发展的本质是扩展人的实质自由，消除那些剥夺能力的贫困。", coords:[-10,10,-10,-10], discussion:"你不关心GDP有多高，你关心一个女孩能不能上学、一个病人能不能就医。贫穷不只是钱少，是能力的剥夺。你以自由作为正义的尺度。", famousQuote:"森：发展即自由。", funnyLine:"别问我国家排第几，先问自己能成为什么。" },
-      { name:"卡尔·马克思", type:"结构矛盾派", code:"S C D R", quote:"哲学家们只是解释世界，问题在于改变世界。", coords:[-10,-10,-10,10], discussion:"你看什么事情都先问：“谁获益了？”别人看到外卖便宜了，你看到骑手在雨里跑。你不是悲观，你是清醒。你对游戏规则本身有一种结构性的不满，能忍受个体的失败，但不能接受系统性的不公。你在朋友圈是那个转发深度报道的人。但要小心：当一切问题都归因结构时，可能会低估个体的能动性——包括你自己的。", famousQuote:"马克思：问题在于改变世界。", funnyLine:"键盘侠们分析热搜，而你打算做点什么？" },
-      { name:"约瑟夫·熊彼特", type:"创造性毁灭派", code:"S C I R", quote:"资本主义的发动机是创新，而创新从内部毁灭旧结构。", coords:[-10,-10,10,10], discussion:"你迷恋创新带来的狂风。旧企业倒下、新产业崛起，你非但不恐惧，反而觉得这才是真正的活力。你崇拜企业家，不是因为他们有钱，而是因为他们敢做梦。", famousQuote:"熊彼特：创造性毁灭。", funnyLine:"旧的不去，新的不来——但新来的也可能是元宇宙。" },
-      { name:"丹尼尔·卡尼曼", type:"心理偏差派", code:"S C I B", quote:"人类是非理性的，这正是社会一切设计的出发点。", coords:[-10,-10,10,-10], discussion:"你知道自己会系统性地犯错：损失厌恶、框架效应、过度自信……你不再硬扛人性，而是聪明地用“助推”把生活引向更好的方向。", famousQuote:"卡尼曼：思考，快与慢。", funnyLine:"慢慢想，快快错——所以才要设计。" },
-      { name:"托马斯·皮凯蒂", type:"积累不平等派", code:"S C D B", quote:"当资本回报率持续高于经济增长率，不平等便会失控。", coords:[-10,-10,-10,-10], discussion:"你翻遍两百年的数据，只为一个结论：r > g。财富会自我集中，除非我们用累进税和全球协作去掰正。你对不平等的愤怒，有数学模型撑腰。", famousQuote:"皮凯蒂：r > g。", funnyLine:"富人的钱不是偷的，是复利滚出来的——那就给复利也上个税。" }
-    ];
-
-    // 维度字母映射
-    function dimLetter(score, dimIndex) {
-      const maps = [
-        score < 0 ? 'S' : 'M',  // D1 国家/市场
-        score < 0 ? 'C' : 'E',  // D2 颠覆/均衡
-        score < 0 ? 'D' : 'I',  // D3 结构/个体
-        score < 0 ? 'B' : 'R'   // D4 本能/理性
+  <script>
+    (function() {
+      // ---------- 题目定义 (分数隐藏) ----------
+      const questions = [
+        { id:1, text:"小区门口的道路坑坑洼洼很久了，你认为最好的解决方式是？", options:[
+          {text:"联系几个邻居，大家一商量，凑钱请施工队把门口这一小段先填平。谁受益谁出钱，最快最直接。", D1:3},
+          {text:"不断拨打市长热线，提交联名信，要求市政部门用税收统一修缮。公共道路就该公共出钱修。", D1:-3},
+          {text:"等一等，相信物业或开发商迟早会解决。市场有需求，自然会有人来提供修路服务，只是时间问题。", D1:2, D2:1},
+          {text:"这本质是城市公共品供给的失败，单靠个体或市场都无法根本解决。需要推动建立业主与市政的常态化沟通机制。", D1:-2, D3:-2}
+        ]},
+        { id:2, text:"你开的小餐馆附近突然开了一家大型连锁店，直接抢走三成生意，你会？", options:[
+          {text:"立刻研发新菜品、搞会员活动、做差异化服务。这就是市场竞争，我能靠自己的本事赢回来。", D1:3, D3:1},
+          {text:"向行业协会和商务局反映，希望出台政策限制连锁店的无序扩张，保护社区小店生态。", D1:-3},
+          {text:"考虑加盟那个连锁品牌，打不过就加入，这也是市场优化资源配置的一种方式。", D1:2, D2:2},
+          {text:"有点无奈。这说明个体户在资本和供应链面前太脆弱了，不是努力就能解决的，是社会结构问题。", D1:-2, D3:-2}
+        ]},
+        { id:3, text:"你如何看待AI新技术对就业的冲击？", options:[
+          {text:"短期会有人失业，但长期一定会创造出更多新工作，市场会自行吸收冲击，最终回归充分就业。", D1:2, D2:3},
+          {text:"政府必须立刻介入，提供大规模再培训计划，甚至考虑缩短工时、重新分配工作机会。", D1:-3},
+          {text:"这是一场创造性破坏，旧岗位永久消失、新岗位在别处诞生。无须过度恐慌，也无须过度干预。", D1:2, D2:-2},
+          {text:"技术从来不是中性的，它由资本驱动，会加剧劳资间的不平等。需要从劳动关系和分配制度上做根本变革。", D1:-3, D3:-3}
+        ]},
+        { id:4, text:"关于医疗服务的提供，你的看法接近哪一项？", options:[
+          {text:"私立医院充分竞争，政府只兜底最穷的人。竞争带来质量，选择权在患者手中。", D1:3},
+          {text:"以公立医疗体系为主，确保每个人不论贫富都能看得起病。医疗是权利，不是商品。", D1:-3},
+          {text:"可以发展商业健康保险，用市场化的保险机制来分担风险，辅以强监管，两者结合最佳。", D1:2, D4:1},
+          {text:"医疗问题的根源在于资源分配不均。如果不解决贫富差距这个结构性问题，无论公私立都难以让所有人满意。", D3:-3, D1:-1}
+        ]},
+        { id:5, text:"你中彩票得了1000万，突然要交一大笔税，你会怎么想？", options:[
+          {text:"税收是文明的对价，只要税率透明、用途正当，我完全愿意依法缴纳。", D1:-1, D2:2},
+          {text:"有点心疼，但也能理解，公共品总要有人买单。希望这笔钱真能用于教育和基建。", D1:-2},
+          {text:"交这么多税，感觉是被迫“行善”。如果这钱由我自己去投资或捐赠，效率一定更高。", D1:3},
+          {text:"富人多交税本就是应该的，这是调节收入分配的必要手段，没什么不舒服。", D1:-3, D3:-2}
+        ]},
+        { id:6, text:"你辛苦存钱计划旅行，出发前手机突然坏掉，维修费刚好花光旅行积蓄，你会？", options:[
+          {text:"没关系，重新开始存钱，计划推迟一点。生活总有意外，但最终会回到正轨。", D2:3},
+          {text:"太倒霉了，感觉整个计划都被打乱了。也许这是命运在暗示我该换个活法，不旅行了。", D2:-3},
+          {text:"我先借钱去旅行，回来再还。打破计划本身就是生活的一部分，人要学会享受不确定性。", D2:-2, D3:1},
+          {text:"我会反思，为什么这么小的冲击就能打垮整个财务计划？应该建立一个紧急备用金制度，让系统更有韧性。", D2:-1, D3:-2}
+        ]},
+        { id:7, text:"看到朋友圈有人发了“五年计划”目标，你的态度是？", options:[
+          {text:"真棒！我也有五年计划，人生就该这样一步步稳健地朝目标靠近。", D2:3, D4:1},
+          {text:"计划赶不上变化。世界是剧烈变动的，我倾向于只定一个大方向，然后随时灵活调整。", D2:-3},
+          {text:"长期规划其实是种幻觉，我们连下周会发生什么都无法预测。我更相信即兴应对的能力。", D2:-3, D4:-2},
+          {text:"有没有计划，取决于你手里有多少资源。如果连下个月的房租都担心，五年计划就是奢侈品。", D2:-2, D3:-3}
+        ]},
+        { id:8, text:"和好友发生了一次大争吵后，你觉得？", options:[
+          {text:"冷静下来好好沟通一下，真诚的关系最终能修复如初，恢复平衡。", D2:3},
+          {text:"有些裂痕一旦产生，关系就永远和以前不一样了。也许我们再也回不去了。", D2:-3},
+          {text:"吵架也是一种深度沟通的方式。正是这种剧烈的冲突，在推动关系演化到新的阶段。", D2:-2, D3:1},
+          {text:"这取决于双方的脾气性格，有些人就是容易记仇，有些人吵完就忘，不能一概而论。", D2:-1, D4:-1}
+        ]},
+        { id:9, text:"你如何看待“努力就能成功”这句话？", options:[
+          {text:"基本正确。社会整体上是公平的，努力大概率会有回报，不努力一定没有。", D2:2, D3:2},
+          {text:"太简单了。时代、运气、出身这些不可控因素才是关键，很多人的成功是不可复制的。", D2:-2, D3:-2},
+          {text:"这得看你在哪个赛道。在稳定行业里努力有用，在剧烈变动的行业里，选择比努力重要得多。", D2:-3, D1:1},
+          {text:"这句话更应被视作一种社会规训，让个体把失败归咎于自己不够努力，从而遮蔽结构性的不公。", D3:-3, D2:-1}
+        ]},
+        { id:10, text:"一个勤奋能干的同事突然被裁员，你的第一反应是？", options:[
+          {text:"只是暂时波动，凭他的能力很快会找到类似甚至更好的工作，经济机器终会吸收他。", D2:3},
+          {text:"他的人生轨迹可能就此改变。有些岗位一旦消失，就再也不会回来了，这是结构转型的代价。", D2:-3},
+          {text:"要看是什么行业。如果是夕阳产业，那就不奇怪；如果是新兴产业，那就是公司自身经营问题。", D2:-1, D1:1},
+          {text:"公司裁员往往不是看个人努力，而是看谁的成本高、谁的关系不够硬。职场本身就是权力场。", D3:-3, D2:-2}
+        ]},
+        { id:11, text:"一位寒门学子考上顶尖名校，媒体争相报道“寒门贵子”，你觉得这主要说明了？", options:[
+          {text:"个人天赋异禀加上超乎常人的自律，一个人只要足够优秀，终究能打破环境限制。", D3:3, D4:2},
+          {text:"这是个极小概率事件，它恰好说明成功的偶然性。更该关注的是，为什么绝大多数同样努力的孩子被埋没了。", D3:-3},
+          {text:"很励志，但如果深挖，他一定是在某个关键节点抓住了偶然的教育资源，个人努力和机遇各占一半。", D3:-1, D2:-2},
+          {text:"这说明现有的教育选拔机制还在起作用，只要考试机制公平，底层就有上升通道。制度没问题。", D3:2, D2:2}
+        ]},
+        { id:12, text:"一个人年纪轻轻就创业成功、财富自由，主要靠什么？", options:[
+          {text:"敏锐的商业嗅觉和敢于冒险的企业家精神。", D3:3, D1:2},
+          {text:"家庭的人脉资源和试错资本，外加运气好恰好站上了风口。", D3:-3},
+          {text:"两者都有。但风口的权重远大于个人努力，同样的才干在不同时代结局截然不同。", D2:-2, D3:-2},
+          {text:"所谓创业神话，更多是媒体渲染的幸存者偏差。我们只看到成功者，看不到千万失败者。这无法用个体因素解释。", D3:-3, D4:-1}
+        ]},
+        { id:13, text:"看到身材管理很好的人，你的第一反应是？", options:[
+          {text:"他一定极其自律，坚持锻炼和严格饮食。这是个人意志力的胜利。", D3:3, D4:2},
+          {text:"也许他有钱有闲，请得起私教和营养师，不用为生计奔波。自律的背后是结构性优势。", D3:-3},
+          {text:"基因好也是一种可能，这个得承认，人和人就是有差异的。", D3:1, D4:-1},
+          {text:"在一些圈子里，身材本身就是阶层的符号。健康食品、健身卡都是要花钱的，这是一种阶级展示。", D3:-2, D1:-1}
+        ]},
+        { id:14, text:"和同事合作项目出了大错，领导追责，你内心觉得是谁的错？", options:[
+          {text:"如果是我负责的部分出错，那就是我自己的问题，不应该推脱给外部原因。", D3:3, D4:1},
+          {text:"先看流程和分工。很多时候是制度和沟通管道本身有漏洞，才会必然出错，不全是个人责任。", D3:-3},
+          {text:"我认为是目标定得太离谱，资源又不够，在这种结构下谁干都会出错。怪个人是领导在甩锅。", D3:-2, D2:-2},
+          {text:"我虽然会感到委屈，但也会反思是不是自己没提前预警风险，下次要更主动沟通。", D3:2, D4:-1}
+        ]},
+        { id:15, text:"关于“996”工作制，你的看法是？", options:[
+          {text:"只要劳资双方自愿，高薪换奋斗，旁人无权干涉。这是契约自由。", D1:3, D3:2},
+          {text:"这本质是资本的过度强势和劳动者的议价权缺失，劳动法必须强制规定工时上限。", D1:-2, D3:-3},
+          {text:"996不是孤立的，是整个社会内卷化的症状。如果所有人都拼命加班，不加班的人就会被淘汰，这是囚徒困境。", D3:-2, D2:-2},
+          {text:"我反对996，但不指望法律。如果人人都果断跳槽拒绝这种公司，市场自己就能淘汰它。", D1:2, D3:1}
+        ]},
+        { id:16, text:"面对“限时折扣”“最后一天”的促销，你的真实态度是？", options:[
+          {text:"我很清醒。正好需要就买，不需要绝不出手。我不会被营销话术牵着走。", D4:3},
+          {text:"虽然知道是套路，但经常还是会忍不住下单。怕错过便宜的恐惧，比理性更强大。", D4:-3},
+          {text:"我会故意反向操作，一看到“限时”就偏不买，用对抗姿态来保持自己不被操控。", D4:1, D1:2},
+          {text:"这和人的成长环境有关。缺乏安全感的人更容易被稀缺性话术打动，这不是理不理性的问题。", D3:-2, D4:-2}
+        ]},
+        { id:17, text:"“明知道该早睡，却放不下手机”，你觉得这情况？", options:[
+          {text:"偶尔发生，是我计划性不强。定个闹钟锁机，靠更强的自我约束就能解决。", D3:2, D4:3},
+          {text:"经常如此，这就是人性。即时满足的诱惑太难用意志力克服了，需要外部环境设计来“助推”。", D4:-3},
+          {text:"不能全怪个人，短视频平台的设计目标就是让人上瘾。个人意志对抗的是一个由精英设计的成瘾系统。", D3:-2, D4:-2},
+          {text:"睡不着是因为对明天感到焦虑。如果生活能有更多的确定感和余裕，自然就能安心早睡了。", D2:-2, D3:-2}
+        ]},
+        { id:18, text:"选择人生伴侣时，你最信赖哪种判断方式？", options:[
+          {text:"客观条件匹配：三观、学历、经济能力，经全面理性权衡后做出选择。", D4:3, D2:2},
+          {text:"感觉。一种说不清的化学反应和相遇时的时机，这个无法用纯粹计算得出。", D4:-3},
+          {text:"我会参考身边信得过的人的意见，尤其是父母和挚友。自己的判断可能有盲区。", D4:-1, D3:-2},
+          {text:"没有固定标准。不同的文化和社会期待会塑造完全不同的择偶观，“理性”本身就是被结构定义的。", D3:-3, D4:-1}
+        ]},
+        { id:19, text:"处理人生重大决定（如跳槽、买房）时，你通常怎么做？", options:[
+          {text:"列出优劣清单，做成本收益分析，咨询相关领域专家，追求最优解。", D4:3, D2:2},
+          {text:"搜集一些信息后，最终还是跟着直觉走。有时候也相信机缘，命里有时终须有。", D4:-3},
+          {text:"先看大趋势，时代的电梯在上升还是下降，比个人在其中怎么折腾更重要。", D2:-2, D3:-2},
+          {text:"重大决定往往不可逆，所以我倾向于先做小范围尝试，根据反馈再调整。行动比空想重要。", D2:-2, D4:-1}
+        ]},
+        { id:20, text:"同事把三个月工资都投进一个据说“稳赚”的新兴币种，你的第一反应是？", options:[
+          {text:"他肯定做足了功课，说不定有内幕消息。这种敏锐和胆识，正是超额回报的来源。", D3:2, D4:2},
+          {text:"大概率是被暴富神话冲昏了头，贪婪和恐惧正在替他做决定，结局恐怕不会好。", D4:-3},
+          {text:"这和他是否有“闲钱”密切相关。如果他家境优越不在乎这笔钱，那就不是非理性，而是风险偏好不同。", D3:-2, D4:-1},
+          {text:"这种现象本身就是市场泡沫的信号。当人人都在谈论某个资产时，可能就该退场了。不是他疯了，是市场疯了。", D2:-2, D4:-1}
+        ]}
       ];
-      return maps[dimIndex];
-    }
 
-    function getTypeCode(scores) {
-      return scores.map((s,i) => dimLetter(s,i)).join(' ');
-    }
-
-    // 距离平方
-    function distSq(scores, coords) {
-      return scores.reduce((sum, s, i) => sum + Math.pow(s - coords[i], 2), 0);
-    }
-
-    // 找到最近原型和次近
-    function matchPrototype(scores) {
-      let minDist = Infinity, secondDist = Infinity;
-      let best = null, second = null;
-      prototypes.forEach(p => {
-        const d = distSq(scores, p.coords);
-        if (d < minDist) {
-          secondDist = minDist;
-          second = best;
-          minDist = d;
-          best = p;
-        } else if (d < secondDist) {
-          secondDist = d;
-          second = p;
-        }
-      });
-      return { primary: best, secondary: second };
-    }
-
-    // ---------- 渲染题目 ----------
-    const form = document.getElementById('quizForm');
-    const submitBtn = document.getElementById('submitBtn');
-    const progressFill = document.getElementById('progressFill');
-    const totalQ = questions.length;
-    let answers = new Array(totalQ).fill(null);
-
-    function renderQuestions() {
-      form.innerHTML = '';
-      questions.forEach((q, idx) => {
-        const card = document.createElement('div');
-        card.className = 'question-card';
-        card.innerHTML = `<div class="question-title"><span class="q-num">${idx+1}</span> ${q.text}</div><div class="options"></div>`;
-        const optsDiv = card.querySelector('.options');
-        q.options.forEach((opt, optIdx) => {
-          const label = document.createElement('label');
-          label.className = 'option';
-          const radio = document.createElement('input');
-          radio.type = 'radio';
-          radio.name = `q${q.id}`;
-          radio.value = optIdx;
-          radio.addEventListener('change', () => {
-            answers[idx] = optIdx;
-            updateSelected(idx);
-            updateProgress();
-            checkComplete();
+      // 计算每个维度的理论最大绝对值 (用于标准化)
+      function getDimensionMaxAbs() {
+        const maxPos = [0,0,0,0]; // 各维度正分最大累加
+        const maxNeg = [0,0,0,0]; // 各维度负分最小累加(绝对值最大)
+        questions.forEach(q => {
+          let dimMaxPos = [0,0,0,0];
+          let dimMaxNeg = [0,0,0,0];
+          q.options.forEach(opt => {
+            const dims = [opt.D1||0, opt.D2||0, opt.D3||0, opt.D4||0];
+            for(let i=0; i<4; i++) {
+              if(dims[i] > dimMaxPos[i]) dimMaxPos[i] = dims[i];
+              if(dims[i] < dimMaxNeg[i]) dimMaxNeg[i] = dims[i];
+            }
           });
-          label.appendChild(radio);
-          label.appendChild(document.createTextNode(opt.text));
-          optsDiv.appendChild(label);
+          for(let i=0; i<4; i++) {
+            maxPos[i] += dimMaxPos[i];
+            maxNeg[i] += dimMaxNeg[i];
+          }
         });
-        form.appendChild(card);
-      });
-    }
-
-    function updateSelected(qIdx) {
-      const cards = form.querySelectorAll('.question-card');
-      const options = cards[qIdx].querySelectorAll('.option');
-      options.forEach(opt => opt.classList.remove('selected'));
-      const val = answers[qIdx];
-      if (val !== null) {
-        options[val].classList.add('selected');
+        const maxAbs = [];
+        for(let i=0; i<4; i++) {
+          maxAbs[i] = Math.max(maxPos[i], Math.abs(maxNeg[i]));
+        }
+        return maxAbs;
       }
-    }
 
-    function updateProgress() {
-      const answered = answers.filter(a => a !== null).length;
-      progressFill.style.width = (answered / totalQ * 100) + '%';
-    }
+      const dimMaxAbs = getDimensionMaxAbs(); // [maxD1, maxD2, maxD3, maxD4]
 
-    function checkComplete() {
-      submitBtn.disabled = answers.some(a => a === null);
-    }
+      // 原型定义 (坐标±10)
+const prototypes = [
+  { 
+    name:"罗伯特·卢卡斯", type:"理性预期派", code:"M E I R", 
+    quote:"天下本无事，干预自扰之。", coords:[10,10,10,10], 
+    discussion:"你相信市场是一部精密的钟表，只要不碰它，指针终会指向最优。别人看到失业，你看到的是劳动者自愿选择闲暇；别人呼吁救市，你冷笑一声：“预期到了就没用。”你打心眼里觉得，任何有计划的干预，要么会被聪明的个体绕开，要么干脆好心办坏事。你看人极准，相信人人都在为自己的利益做最优计算——但偶尔也需要承认，人类不是计算器，恐慌和从众有时候真的会改写剧本。",
+    famousQuote:"卢卡斯批判：被预测到的政策是无效的。", funnyLine:"被预测到的段子也是不好笑的。" 
+  },
+  { 
+    name:"劳伦斯·萨默斯", type:"长期停滞派", code:"S E I R", 
+    quote:"世界可能因需求不足而陷入长期停滞。", coords:[-10,10,10,10], 
+    discussion:"你有一双望向地平线的眼睛，看到的是一个即使市场机制完美，也可能因人口老化和技术停滞而坠入长期需求不足的泥潭。别人在讨论下一次繁荣时，你在计算总需求的缺口。你呼吁公共投资，不是因为你喜欢大政府，而是因为数学告诉你别无选择。别人说你悲观，你说这叫“新常态”。但要小心，过多的忧患意识可能让你忽略那些正在裂变的微小创新。",
+    famousQuote:"萨默斯：长期停滞是21世纪最大的宏观挑战。", funnyLine:"长期停滞——连乐观都停滞了。" 
+  },
+  { 
+    name:"道格拉斯·诺斯", type:"制度框架派", code:"M E D R", 
+    quote:"制度是社会的游戏规则，奠定增长或衰败的根基。", coords:[10,10,-10,10], 
+    discussion:"你始终盯着规则本身。个体努力固然重要，但好制度让坏人做不成坏事，坏制度让好人活不下去。你最喜欢问：“这个游戏规则是谁写的？”面对任何社会现象，你都会下意识拆解背后的产权安排、交易成本和激励结构。在朋友圈里，你是那个分析政策底层逻辑的人。不过，迷恋制度分析有时会让你低估文化、情感和偶然性这些制度解释不了的“噪音”。",
+    famousQuote:"诺斯：历史是制度变迁的故事。", funnyLine:"规则不对，氪金也没用。" 
+  },
+  { 
+    name:"埃莉诺·奥斯特罗姆", type:"社群治理派", code:"M E D B", 
+    quote:"社群能超越公地悲剧，自发演化出精巧制度。", coords:[10,10,-10,-10], 
+    discussion:"你不迷信市场，也怀疑利维坦。你看见的是村落、渔场、社区里的人们，如何靠着信任、沟通和长期博弈，自己管好了公共池塘。你觉得人性既非全善也非全恶，只要制度设计得当，社群可以比专家更聪明。你的经济学里有人情味，相信大妈们的协商比经济学家的模型更接地气。但要警惕，不是所有社群都像理论中那样平等，权力也可能在“协商”中被悄悄垄断。",
+    famousQuote:"奥斯特罗姆：公共事物的治理之道。", funnyLine:"公地悲剧的剧本，被一群大妈改写了。" 
+  },
+  { 
+    name:"路德维希·冯·米塞斯", type:"激进主观派", code:"M C I R", 
+    quote:"价值源于个体行动，任何干预都是通往奴役之路。", coords:[10,-10,10,10], 
+    discussion:"你是自由的绝对卫士。对你来说，价值不是算出来的，而是每一个具体的人在具体的情境中用脚投票。价格管制？那会导致短缺。最低工资？那会制造失业。你眼里的市场不是一台机器，而是无数有目的的个人行动的协调过程。你捍卫的是个体选择的权利本身，哪怕这种选择在别人看来不够聪明。但你的论证有时像一把过于锋利的剑，可能让人忽略现实中权力不对等带来的选择不自由。",
+    famousQuote:"米塞斯：人类行为公理。", funnyLine:"你连排队被插队都想引用《人的行动》。" 
+  },
+  { 
+    name:"乔治·阿克洛夫", type:"动物精神派", code:"M C I B", 
+    quote:"信心乘数崩溃时，只有看得见的手能稳住局面。", coords:[10,-10,10,-10], 
+    discussion:"你觉得市场就是一锅情绪浓汤——贪婪、恐惧、幻觉、公平感轮番沸腾。你知道，当动物精神溃散时，再完美的理性模型也只是一张废纸。别人在分析资产负债表时，你在观察故事和叙事如何改变人心。你相信信心是脆弱的，一旦崩溃就需要看得见的手出来稳住局面。但有时你可能会高估恐惧的传染性，低估了那些在恐慌中依然保持冷静的“理性锚点”。",
+    famousQuote:"阿克洛夫：动物精神。", funnyLine:"市场不是理性的，它只是还没开始恐慌。" 
+  },
+  { 
+    name:"托斯丹·凡勃伦", type:"制度演化派", code:"M C D R", 
+    quote:"制度塑造人，远多于人设计制度；演化没有最优终点。", coords:[10,-10,-10,10], 
+    discussion:"你总带着一点讽刺的微笑打量世界。别人在赞美消费升级，你看到的是炫耀性消费；别人在讨论效率，你看到的是有闲阶级的金钱竞赛。你觉得人类是被习惯、仪式和地位焦虑锁住的奇怪物种，经济行为从来就不是纯粹的理性计算，而是社会惯习的笨拙演化。在朋友圈里，你是那个用凡勃伦术语吐槽奢侈品广告的人。但要小心，过度的冷眼旁观可能会让你忽略了那些真正改善生活的技术进步。",
+    famousQuote:"凡勃伦：炫耀性消费。", funnyLine:"你买那只包，是为了装东西还是为了装？" 
+  },
+  { 
+    name:"卡尔·波兰尼", type:"社会保护派", code:"M C D B", 
+    quote:"脱嵌的市场是灾难，社会必须保护自己。", coords:[10,-10,-10,-10], 
+    discussion:"你从历史的深处听见了社会反向运动的轰鸣。当土地、劳动力和货币都被强行变成商品时，社会就会撕裂，并以各种保护主义的方式进行反抗。你坚信，经济体系从来不能脱离社会关系而存在，市场乌托邦终将遭到社会自我保护的反噬。你看今天的平台经济和零工模式，就像看到了19世纪《斯皮纳姆兰》法案的重演。但你也需要小心，过分强调保护有时会滑向保守主义，阻碍那些真正解放个体的变迁。",
+    famousQuote:"波兰尼：大转型。", funnyLine:"市场不是上帝，它只是忘了自己从哪儿来。" 
+  },
+  { 
+    name:"约翰·梅纳德·凯恩斯", type:"宏观干预派", code:"S E I R", 
+    quote:"长期而言，我们都会死；市场失灵时，政府必须行动。", coords:[-10,10,10,10], 
+    discussion:"你有一双看穿萧条的眼睛。当所有人都捂紧钱包，准备熬过寒冬时，你果断站出来：“我来花钱。”你相信，在信心崩溃的暗夜里，只有政府这只看得见的手能点燃有效需求的火把。别人担心通货膨胀，你担心的是闲置的工厂和失业的工人。你骨子里是个务实的乐观主义者，认为问题总有解决方案。但你的工具箱有时过于依赖总需求的扩张，可能会忽略结构性的供给问题和债务积累的长期风险。",
+    famousQuote:"凯恩斯：长期而言，我们都死了。", funnyLine:"所以双十一别等，现在就下单。" 
+  },
+  { 
+    name:"海曼·明斯基", type:"金融不稳派", code:"S C I B", 
+    quote:"稳定本身孕育着不稳定，金融天生需要最后贷款人。", coords:[-10,-10,10,-10], 
+    discussion:"你深知，风平浪静的日子里，暗礁正在水面下生长。越长时间没有危机，系统就越脆弱，因为避险情绪会慢慢被乐观和贪婪取代。你主张要有强大的最后贷款人和金融监管，不是为了拯救每一个赌徒，而是为了保住整个赌场不坍塌。别人看到繁荣，你看到的是融资结构从稳健走向庞氏的过程。但你的警惕有时会显得过于紧张，需要记得，金融演化的风险也能被创新和监管的博弈部分消解。",
+    famousQuote:"明斯基时刻：稳定滋长不稳定。", funnyLine:"风平浪静的日子，正是暴风雨的摇篮。" 
+  },
+  { 
+    name:"保罗·萨缪尔森", type:"新综合派", code:"S E D R", 
+    quote:"市场调节总量，政府熨平周期；两种智慧不可偏废。", coords:[-10,10,-10,10], 
+    discussion:"你站在凯恩斯与新古典的交汇处，左手市场右手政策。你相信宏观经济学需要坚实的微观基础，也相信稳定政策可以弥合经济周期带来的裂痕。你既不会完全信任自由放任，也不会盲目崇拜政府干预，总是试图在效率与公平之间寻找动态平衡。这种“既要也要”的智慧让你在辩论中显得特别理性，但也可能被两端的原教旨主义者同时指责为“不够彻底”。没关系，你本来就是选择困难症的理据提供者。",
+    famousQuote:"萨缪尔森：经济学是选择的科学。", funnyLine:"你的选择困难症，终于有了理论支撑。" 
+  },
+  { 
+    name:"阿马蒂亚·森", type:"发展自由派", code:"S E D B", 
+    quote:"发展的本质是扩展人的实质自由，消除那些剥夺能力的贫困。", coords:[-10,10,-10,-10], 
+    discussion:"你不关心GDP排第几，你关心一个女孩能不能上学、一个病人能不能得到医治、一个少数群体能否发出声音。在你眼中，贫穷不只是缺钱，更是能力的剥夺——无法接受教育、无法参与公共生活、无法自由地成为自己想成为的人。你以自由作为正义的尺度，既批判单纯的市场原教旨，也不完全迷信国家万能。你关注的是真实的、具体的人，而不是抽象的“经济人”。但你的理想主义有时可能低估了制度实施的难度和现实政治的复杂性。",
+    famousQuote:"森：发展即自由。", funnyLine:"别问我国家排第几，先问自己能成为什么。" 
+  },
+  { 
+    name:"卡尔·马克思", type:"结构矛盾派", code:"S C D R", 
+    quote:"哲学家们只是解释世界，问题在于改变世界。", coords:[-10,-10,-10,10], 
+    discussion:"你看什么事情都先问一个问题：“谁获益了？”别人看到外卖便宜了，你看到骑手在雨里跑。别人看到经济增长了，你看到增长的部分进了谁的口袋。你不是悲观，你是清醒——至少你自己这么觉得。你对现有秩序有一种结构性的不满，不是针对某个人，而是觉得这个游戏规则本身就不公平。你能忍受个体的失败，但不能接受系统性的不公。你在朋友圈里是那个转发深度报道、在评论区写长文的人。有人觉得你太激进，但也有人偷偷截图了你说的话。但你要小心的是：当你觉得一切问题都是结构性的时候，你可能会低估个体的能动性——包括你自己的。",
+    famousQuote:"马克思：问题在于改变世界。", funnyLine:"键盘侠们分析热搜，而你打算做点什么？" 
+  },
+  { 
+    name:"约瑟夫·熊彼特", type:"创造性毁灭派", code:"S C I R", 
+    quote:"资本主义的发动机是创新，而创新从内部毁灭旧结构。", coords:[-10,-10,10,10], 
+    discussion:"你迷恋创新带来的狂风。旧企业倒下、新产业崛起，你非但不恐惧，反而觉得这才是真正的活力。你崇拜的不是有钱的资本家，而是那些敢于把梦想变成产品的企业家——他们打破均衡、创造新组合，哪怕最终自己也被下一波浪潮吞没。你相信，停滞比衰退更可怕，创造性的破坏是繁荣必须付出的代价。但有时你可能过于浪漫化创新，忽略了每一次“毁灭”背后的具体痛苦和那些无法顺利转岗的普通人。",
+    famousQuote:"熊彼特：创造性毁灭。", funnyLine:"旧的不去，新的不来——但新来的也可能是元宇宙。" 
+  },
+  { 
+    name:"丹尼尔·卡尼曼", type:"心理偏差派", code:"S C I B", 
+    quote:"人类是非理性的，这正是社会一切设计的出发点。", coords:[-10,-10,10,-10], 
+    discussion:"你比谁都清楚，你面前这台生物计算机系统性地犯着各种错误：损失厌恶、框架效应、过度自信、现状偏差……你不再硬扛人性，而是聪明地承认自己的局限，然后利用环境设计来“助推”自己走向更好的选择。你相信好的制度不是假设人像爱因斯坦一样理性，而是帮助普通人做出更好的决策。你温和地干预，既不粗暴也不放任。但要小心，过度的自我怀疑有时会让你失去果断行动的勇气，记得直觉在简单场景下依然高效。",
+    famousQuote:"卡尼曼：思考，快与慢。", funnyLine:"慢慢想，快快错——所以才要设计。" 
+  },
+  { 
+    name:"托马斯·皮凯蒂", type:"积累不平等派", code:"S C D B", 
+    quote:"当资本回报率持续高于经济增长率，不平等便会失控。", coords:[-10,-10,-10,-10], 
+    discussion:"你翻遍两百年的数据，只为了证明一个简洁得令人不安的公式：r > g。财富会自我集中，就像滚雪球一样，除非我们用累进财富税和全球协作去掰正这个过程。你对不平等的愤怒有数学模型撑腰，不是空洞的道德呐喊，而是历史规律的铁证。你让那些觉得“不平等是自然现象”的人哑口无言。但你也要留心，过分聚焦于分配可能会低估做大蛋糕的生产端动力，平衡分配与激励依然是一个需要精细考量的难题。",
+    famousQuote:"皮凯蒂：r > g。", funnyLine:"富人的钱不是偷的，是复利滚出来的——那就给复利也上个税。" 
+  }
+];
 
-    // 计算维度总分
-    function calculateScores() {
-      let D1=0, D2=0, D3=0, D4=0;
-      questions.forEach((q, idx) => {
-        const chosen = answers[idx];
-        if (chosen === null) return;
-        const opt = q.options[chosen];
-        if (opt.D1) D1 += opt.D1;
-        if (opt.D2) D2 += opt.D2;
-        if (opt.D3) D3 += opt.D3;
-        if (opt.D4) D4 += opt.D4;
+      // 辅助函数
+      function dimLetter(score, dimIndex) {
+        const maps = [score < 0 ? 'S' : 'M', score < 0 ? 'C' : 'E', score < 0 ? 'D' : 'I', score < 0 ? 'B' : 'R'];
+        return maps[dimIndex];
+      }
+      function getTypeCode(scores) {
+        return scores.map((s,i) => dimLetter(s,i)).join(' ');
+      }
+      function distSq(scores, coords) {
+        return scores.reduce((sum, s, i) => sum + Math.pow(s - coords[i], 2), 0);
+      }
+      function matchPrototype(scores) {
+        let minDist = Infinity, secondDist = Infinity;
+        let best = null, second = null;
+        prototypes.forEach(p => {
+          const d = distSq(scores, p.coords);
+          if (d < minDist) { secondDist = minDist; second = best; minDist = d; best = p; }
+          else if (d < secondDist) { secondDist = d; second = p; }
+        });
+        return { primary: best, secondary: second };
+      }
+
+      // 状态管理
+      const totalQ = questions.length;
+      let answers = new Array(totalQ).fill(null);
+      let currentIndex = 0;
+
+      const questionContainer = document.getElementById('questionContainer');
+      const prevBtn = document.getElementById('prevBtn');
+      const nextBtn = document.getElementById('nextBtn');
+      const submitBtn = document.getElementById('submitBtn');
+      const questionIndicator = document.getElementById('questionIndicator');
+      const progressFill = document.getElementById('progressFill');
+      const testSection = document.getElementById('testSection');
+      const resultSection = document.getElementById('resultSection');
+
+      function renderCurrentQuestion() {
+        const q = questions[currentIndex];
+        const selectedVal = answers[currentIndex];
+        let html = `<div class="question-title"><span class="q-num">${currentIndex+1}/${totalQ}</span> ${q.text}</div><div class="options">`;
+        q.options.forEach((opt, optIdx) => {
+          const checkedAttr = (selectedVal === optIdx) ? 'checked' : '';
+          const selectedClass = (selectedVal === optIdx) ? 'selected' : '';
+          html += `<label class="option ${selectedClass}"><input type="radio" name="currentQ" value="${optIdx}" ${checkedAttr}> ${opt.text}</label>`;
+        });
+        html += '</div>';
+        questionContainer.innerHTML = html;
+
+        document.querySelectorAll('input[name="currentQ"]').forEach(radio => {
+          radio.addEventListener('change', (e) => {
+            answers[currentIndex] = parseInt(e.target.value, 10);
+            updateSelectedStyle();
+            updateProgress();
+            checkCompletion();
+          });
+        });
+        updateNavButtons();
+        updateProgress();
+        checkCompletion();
+        updateIndicator();
+      }
+
+      function updateSelectedStyle() {
+        const options = document.querySelectorAll('.option');
+        const selectedVal = answers[currentIndex];
+        options.forEach((opt, idx) => opt.classList.toggle('selected', idx === selectedVal));
+      }
+      function updateProgress() {
+        const answered = answers.filter(a => a !== null).length;
+        progressFill.style.width = (answered / totalQ * 100) + '%';
+      }
+      function updateNavButtons() {
+        prevBtn.disabled = (currentIndex === 0);
+        if (currentIndex === totalQ - 1) {
+          nextBtn.style.display = 'none';
+          submitBtn.style.display = 'inline-block';
+        } else {
+          nextBtn.style.display = 'inline-block';
+          submitBtn.style.display = 'none';
+        }
+      }
+      function updateIndicator() {
+        questionIndicator.textContent = `${currentIndex+1} / ${totalQ}`;
+      }
+      function checkCompletion() {
+        if (currentIndex === totalQ - 1) {
+          submitBtn.disabled = answers.some(a => a === null);
+        }
+      }
+
+      function goToPrev() { if (currentIndex > 0) { currentIndex--; renderCurrentQuestion(); } }
+      function goToNext() { if (currentIndex < totalQ - 1) { currentIndex++; renderCurrentQuestion(); } }
+
+      // 计算标准化得分 (映射到-10..10)
+      function calculateStandardizedScores() {
+        let raw = [0,0,0,0];
+        questions.forEach((q, idx) => {
+          const chosen = answers[idx];
+          if (chosen === null) return;
+          const opt = q.options[chosen];
+          raw[0] += opt.D1 || 0;
+          raw[1] += opt.D2 || 0;
+          raw[2] += opt.D3 || 0;
+          raw[3] += opt.D4 || 0;
+        });
+        // 标准化
+        return raw.map((val, i) => {
+          const maxAbs = dimMaxAbs[i];
+          if (maxAbs === 0) return 0;
+          let standardized = (val / maxAbs) * 10;
+          // 裁剪到[-10,10]
+          return Math.min(10, Math.max(-10, standardized));
+        });
+      }
+
+      // 结果生成
+      function showResults(scores, primary, secondary) {
+        const typeCode = getTypeCode(scores);
+        const dimNames = ['国家/市场','均衡/颠覆','个体/结构','理性/本能'];
+        let html = `
+        <div class="result-paper">
+          <div class="paper-title">📄 经济学人格测定报告</div>
+          <div class="paper-authors">《生活场景实证研究》第42卷 · 单一样本分析</div>
+          <div class="section-title">Abstract</div>
+          <div class="abstract-box">
+            基于20道情景选择题的实证分析表明，被试的经济学人格类型为 <strong>${typeCode}</strong>，
+            对应经济学家 <strong>${primary.name}</strong>（${primary.type}）。<br>
+            被试在国家/市场、均衡/颠覆、个体/结构、理性/本能四个维度上表现出显著偏好。<br>
+            副型为 <strong>${getTypeCode(secondary.coords)}</strong>（${secondary.name}）。<br>
+            本文结果经多重稳健性检验，均未被推翻。
+          </div>
+          <div class="section-title">1. Introduction</div>
+          <p>当代社会，个体面临日益复杂的经济决策环境。然而，绝大多数人并不知道自己的经济学人格类型，这一知识缺口导致了大量非最优决策行为（如双十一乱买东西、跟风跳槽、对宏观经济指手画脚）。本文旨在填补这一空白，并揭示被试深藏不露的经济学灵魂。</p>
+          <div class="section-title">2. Data & Methodology</div>
+          <p><strong>数据来源：</strong>被试本人，在${new Date().toLocaleDateString()}的一次认真作答。样本量N=1，但信心极高。</p>
+          <p><strong>变量说明：</strong></p>
+          <table><tr><th>维度</th><th>符号</th><th>正极</th><th>负极</th></tr>
+            <tr><td>D1 国家/市场</td><td>S/M</td><td>市场自由放任</td><td>国家干预</td></tr>
+            <tr><td>D2 均衡/颠覆</td><td>E/C</td><td>均衡稳态</td><td>非均衡演化</td></tr>
+            <tr><td>D3 个体/结构</td><td>I/D</td><td>微观个体基础</td><td>结构整体约束</td></tr>
+            <tr><td>D4 理性/本能</td><td>R/B</td><td>完全理性</td><td>有限理性/本能</td></tr>
+          </table>
+          <p><strong>回归方程：</strong> Personality = β₀ + β₁·D1 + β₂·D2 + β₃·D3 + β₄·D4 + ε （ε为中午吃太饱的误差）</p>
+          <p><strong>原始选项记录：</strong></p>
+          <table><tr><th>题号</th><th>选择</th></tr>
+            ${questions.map((q,i)=>`<tr><td>${i+1}. ${q.text.substring(0,20)}…</td><td>选项 ${String.fromCharCode(65+answers[i])}</td></tr>`).join('')}
+          </table>
+          <div class="section-title">3. Results</div>
+          <div class="chart-row">
+            <div class="chart-box"><canvas id="barChart"></canvas></div>
+            <div class="chart-box"><canvas id="radarChart"></canvas></div>
+          </div>
+          <p><strong>基准回归结果：</strong></p>
+          <span class="type-badge">${typeCode}</span>
+          <p><strong>${primary.name}</strong> —— ${primary.type}</p>
+          <p class="quote">“${primary.quote}”</p>
+          <p>副型：${getTypeCode(secondary.coords)}（${secondary.name}）</p>
+          <div class="section-title">4. Discussion</div>
+          <p>${primary.discussion}</p>
+          <div class="section-title">5. Robustness Check</div>
+          <div class="robustness">
+            <p>为检验结果稳健性，本文采用以下替代策略：</p>
+            <ul>
+              <li>删掉你犹豫最久的那道题重新跑 → 结果不变。</li>
+              <li>把所有选项随机打乱重新赋分 → 结果还是不变。</li>
+              <li>让你室友替你答 → 结果变了，但你室友是${secondary.name}，这不能说明你的结果不稳健，只能说明你室友有问题。</li>
+            </ul>
+            <p>综上，本文结果通过了所有稳健性检验（前提是你不质疑我们的检验方法）。</p>
+          </div>
+          <div class="section-title">6. Conclusion</div>
+          <div class="conclusion-quote">
+            <p>${primary.name}说过：${primary.famousQuote}</p>
+            <p><em>${primary.funnyLine || '键盘侠们分析热搜，而你打算做点什么？'}</em></p>
+          </div>
+          <p style="text-align:center; margin-top:1.2rem; color:#8b6b58;">—— 测试结束。你的经济学人格，已在星丛中亮起。</p>
+        </div>`;
+
+        resultSection.innerHTML = html;
+        testSection.style.display = 'none';
+        resultSection.style.display = 'block';
+
+        setTimeout(() => {
+          // 柱状图
+          const barCtx = document.getElementById('barChart').getContext('2d');
+          new Chart(barCtx, {
+            type: 'bar',
+            data: {
+              labels: dimNames,
+              datasets: [{
+                label: '标准化得分',
+                data: scores,
+                backgroundColor: scores.map(s => s >= 0 ? 'rgba(182, 139, 110, 0.85)' : 'rgba(110, 79, 60, 0.85)'),
+                borderColor: scores.map(s => s >= 0 ? '#b68b6e' : '#6e4f3c'),
+                borderWidth: 1.5,
+                borderRadius: 8,
+                barPercentage: 0.7,
+              }]
+            },
+            options: {
+              plugins: { legend: { display: false } },
+              scales: {
+                y: {
+                  min: -10,
+                  max: 10,
+                  ticks: { stepSize: 2, callback: (val) => val + ' ' },
+                  grid: { color: '#e7d7c8' }
+                },
+                x: { grid: { display: false } }
+              }
+            }
+          });
+          // 雷达图
+          const radarCtx = document.getElementById('radarChart').getContext('2d');
+          new Chart(radarCtx, {
+            type: 'radar',
+            data: {
+              labels: dimNames,
+              datasets: [{
+                label: '你',
+                data: scores,
+                backgroundColor: 'rgba(182, 139, 110, 0.25)',
+                borderColor: '#8b6b58',
+                borderWidth: 2,
+                pointBackgroundColor: '#5e3c2c',
+                pointBorderColor: '#fff',
+                pointRadius: 5,
+              }]
+            },
+            options: {
+              scales: {
+                r: {
+                  min: -10,
+                  max: 10,
+                  ticks: { stepSize: 2, backdropColor: 'transparent' },
+                  grid: { color: '#dacbbc' },
+                  pointLabels: { font: { size: 13 } }
+                }
+              },
+              plugins: { legend: { display: false } }
+            }
+          });
+        }, 80);
+      }
+
+      submitBtn.addEventListener('click', () => {
+        const scores = calculateStandardizedScores();
+        const { primary, secondary } = matchPrototype(scores);
+        showResults(scores, primary, secondary);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
       });
-      return [D1, D2, D3, D4];
-    }
 
-    // ---------- 结果论文生成 ----------
-    function showResults(scores, primary, secondary) {
-      const resultDiv = document.getElementById('resultSection');
-      const typeCode = getTypeCode(scores);
-      const dimNames = ['国家/市场','均衡/颠覆','个体/结构','理性/本能'];
-      const dimLetters = [scores[0]<0?'S (国家干预)':'M (市场自由)',
-                          scores[1]<0?'C (颠覆/非均衡)':'E (均衡稳态)',
-                          scores[2]<0?'D (结构整体)':'I (微观个体)',
-                          scores[3]<0?'B (本能/偏差)':'R (完全理性)'];
+      prevBtn.addEventListener('click', goToPrev);
+      nextBtn.addEventListener('click', goToNext);
 
-      let html = `
-      <div class="result-paper">
-        <div class="paper-title">📄 经济学人格测定报告</div>
-        <div class="paper-authors">《生活场景实证研究》第42卷 · 单一样本分析</div>
-        <div class="section-title">Abstract</div>
-        <div class="abstract-box">
-          基于20道情景选择题的实证分析表明，被试的经济学人格类型为 <strong>${typeCode}</strong>，
-          对应经济学家 <strong>${primary.name}</strong>（${primary.type}）。<br>
-          被试在国家/市场、均衡/颠覆、个体/结构、理性/本能四个维度上表现出显著偏好。<br>
-          副型为 <strong>${getTypeCode(secondary.coords)}</strong>（${secondary.name}）。<br>
-          本文结果经多重稳健性检验，均未被推翻。
-        </div>
-
-        <div class="section-title">1. Introduction</div>
-        <p>当代社会，个体面临日益复杂的经济决策环境。然而，绝大多数人并不知道自己的经济学人格类型，这一知识缺口导致了大量非最优决策行为（如双十一乱买东西、跟风跳槽、对宏观经济指手画脚）。本文旨在填补这一空白，并揭示被试深藏不露的经济学灵魂。</p>
-
-        <div class="section-title">2. Data & Methodology</div>
-        <p><strong>数据来源：</strong>被试本人，在${new Date().toLocaleDateString()}的一次认真作答。样本量N=1，但信心极高。</p>
-        <p><strong>变量说明：</strong></p>
-        <table>
-          <tr><th>维度</th><th>符号</th><th>正极</th><th>负极</th></tr>
-          <tr><td>D1 国家/市场</td><td>S/M</td><td>市场自由放任</td><td>国家干预</td></tr>
-          <tr><td>D2 均衡/颠覆</td><td>E/C</td><td>均衡稳态</td><td>非均衡演化</td></tr>
-          <tr><td>D3 个体/结构</td><td>I/D</td><td>微观个体基础</td><td>结构整体约束</td></tr>
-          <tr><td>D4 理性/本能</td><td>R/B</td><td>完全理性</td><td>有限理性/本能</td></tr>
-        </table>
-        <p><strong>回归方程：</strong> Personality = β₀ + β₁·D1 + β₂·D2 + β₃·D3 + β₄·D4 + ε （ε为中午吃太饱的误差）</p>
-        <p><strong>原始选项记录：</strong></p>
-        <table>
-          <tr><th>题号</th><th>选择</th></tr>
-          ${questions.map((q,i)=>`<tr><td>${i+1}. ${q.text.substring(0,20)}…</td><td>选项 ${String.fromCharCode(65+answers[i])}</td></tr>`).join('')}
-        </table>
-
-        <div class="section-title">3. Results</div>
-        <div class="chart-row">
-          <div class="chart-box"><canvas id="barChart"></canvas></div>
-          <div class="chart-box"><canvas id="radarChart"></canvas></div>
-        </div>
-        <p><strong>基准回归结果：</strong></p>
-        <span class="type-badge">${typeCode}</span>
-        <p><strong>${primary.name}</strong> —— ${primary.type}</p>
-        <p class="quote">“${primary.quote}”</p>
-        <p>副型：${getTypeCode(secondary.coords)}（${secondary.name}）</p>
-
-        <div class="section-title">4. Discussion</div>
-        <p>${primary.discussion}</p>
-
-        <div class="section-title">5. Robustness Check</div>
-        <div class="robustness">
-          <p>为检验结果稳健性，本文采用以下替代策略：</p>
-          <ul>
-            <li>删掉你犹豫最久的那道题重新跑 → 结果不变。</li>
-            <li>把所有选项随机打乱重新赋分 → 结果还是不变。</li>
-            <li>让你室友替你答 → 结果变了，但你室友是${secondary.name}，这不能说明你的结果不稳健，只能说明你室友有问题。</li>
-          </ul>
-          <p>综上，本文结果通过了所有稳健性检验（前提是你不质疑我们的检验方法）。</p>
-        </div>
-
-        <div class="section-title">6. Conclusion</div>
-        <div class="conclusion-quote">
-          <p>${primary.name}说过：${primary.famousQuote}</p>
-          <p><em>${primary.funnyLine || '所以，键盘侠们只是在分析，而你打算做点什么？'}</em></p>
-        </div>
-        <p style="text-align:center; margin-top:1.2rem; color:#8b6b58;">—— 测试结束。你的经济学人格，已在星丛中亮起。</p>
-      </div>`;
-
-      resultDiv.innerHTML = html;
-      document.getElementById('testSection').style.display = 'none';
-      resultDiv.style.display = 'block';
-
-      // 绘制图表
-      setTimeout(() => {
-        const barCtx = document.getElementById('barChart').getContext('2d');
-        new Chart(barCtx, {
-          type: 'bar',
-          data: {
-            labels: dimNames,
-            datasets: [{
-              label: '维度得分',
-              data: scores,
-              backgroundColor: scores.map(s => s>=0 ? '#b68b6e' : '#6e4f3c'),
-              borderRadius: 6
-            }]
-          },
-          options: {
-            plugins:{legend:{display:false}},
-            scales:{y:{min:-12,max:12,ticks:{stepSize:4}}}
-          }
-        });
-        const radarCtx = document.getElementById('radarChart').getContext('2d');
-        new Chart(radarCtx, {
-          type: 'radar',
-          data: {
-            labels: dimNames,
-            datasets: [{
-              label: '你',
-              data: scores,
-              backgroundColor: 'rgba(182,139,110,0.25)',
-              borderColor: '#8b6b58',
-              pointBackgroundColor: '#5e3c2c'
-            }]
-          },
-          options: {
-            scales:{r:{min:-12,max:12,ticks:{stepSize:4}}},
-            plugins:{legend:{display:false}}
-          }
-        });
-      }, 80);
-    }
-
-    // ---------- 事件绑定 ----------
-    submitBtn.addEventListener('click', () => {
-      const scores = calculateScores();
-      const { primary, secondary } = matchPrototype(scores);
-      showResults(scores, primary, secondary);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
-
-    renderQuestions();
-    updateProgress();
-  })();
-</script>
+      renderCurrentQuestion();
+    })();
+  </script>
 </body>
 </html>
